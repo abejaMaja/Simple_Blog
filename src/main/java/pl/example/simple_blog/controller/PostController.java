@@ -39,11 +39,12 @@ public class PostController {
         return postService.postsById(postId);
     }
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable(name = "id") Long postId) {
         log.info("Received request: delete -> " + postId);
         postService.deletePost(postId);
     }
-    @PatchMapping("/{id}")
+    @PatchMapping("/update/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void update(@PathVariable(name = "id") Long postId, @RequestBody Post post) {
         log.info("Received request: update -> " + post);
