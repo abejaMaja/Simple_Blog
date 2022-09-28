@@ -12,6 +12,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import pl.example.simple_blog.SimpleBlogApplication;
 import pl.example.simple_blog.model.Post;
+import pl.example.simple_blog.model.PostDTO;
 
 import java.util.List;
 
@@ -26,14 +27,14 @@ class PostControllerTest {
     public void test_emptyListAfterStartDoesNotThrowErrorsAndReturnsStatusCodeOK() {
         TestRestTemplate testRestTemplate = new TestRestTemplate();
 
-        ResponseEntity<List<Post>> responseEntity = testRestTemplate.exchange("http://localhost:" + randomServerPort + "/api/post", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Post>>() {
+        ResponseEntity<List<PostDTO>> responseEntity = testRestTemplate.exchange("http://localhost:" + randomServerPort + "/api/post", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<PostDTO>>() {
         });
 
         // status code verification
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
         // content verification
-        List<Post> postList = responseEntity.getBody();
+        List<PostDTO> postList = responseEntity.getBody();
         Assertions.assertEquals(0, postList.size());
     }
 
@@ -56,22 +57,22 @@ class PostControllerTest {
         Assertions.assertEquals(HttpStatus.CREATED, addResponseEntity.getStatusCode());
 
         // DB state verification
-        ResponseEntity<List<Post>> responseEntity = testRestTemplate.exchange("http://localhost:" + randomServerPort + "/api/post", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Post>>() {
+        ResponseEntity<List<PostDTO>> responseEntity = testRestTemplate.exchange("http://localhost:" + randomServerPort + "/api/post", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<PostDTO>>() {
         }); // generic types with Spring RestTemplate we need to use ParameterizedTypeReference
 
         // status code verification
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
         // content verification
-        List<Post> post = responseEntity.getBody();
+        List<PostDTO> postDTO = responseEntity.getBody();
 
-        Assertions.assertEquals(1, post.size());
-        Post theOnlyElement = post.get(0);
+        Assertions.assertEquals(1, postDTO.size());
+        PostDTO theOnlyElement = postDTO.get(0);
 
-        Assertions.assertEquals("First title", theOnlyElement.getTitle());
-        Assertions.assertEquals("The body of content", theOnlyElement.getContent());
+        Assertions.assertEquals("First title", theOnlyElement.getPostTitle() );
+        Assertions.assertEquals("The body of content", theOnlyElement.getContentBody());
         Assertions.assertNotNull(theOnlyElement.getCreationDate());
-        Assertions.assertNull(theOnlyElement.getUpdateDate());
+
     }
 
     @Test
@@ -128,13 +129,13 @@ class PostControllerTest {
         Assertions.assertEquals(HttpStatus.CREATED, addResponseEntity.getStatusCode());
 
         // DB state verification
-        ResponseEntity<List<Post>> responseEntity = testRestTemplate.exchange("http://localhost:" + randomServerPort + "/api/post", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Post>>() {
+        ResponseEntity<List<PostDTO>> responseEntity = testRestTemplate.exchange("http://localhost:" + randomServerPort + "/api/post", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<PostDTO>>() {
         }); // generic types with Spring RestTemplate we need to use ParameterizedTypeReference
 
         // status code verification
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        List<Post> postList = responseEntity.getBody();
-        Post post = postList.get(0);
+        List<PostDTO> postList = responseEntity.getBody();
+        PostDTO post = postList.get(0);
         Long id = post.getId();
 
         ResponseEntity<List<Post>> updateResponseEntity = testRestTemplate.exchange(
@@ -150,16 +151,16 @@ class PostControllerTest {
                 }); // generic types with Spring RestTemplate we need to use ParameterizedTypeReference;
         // status code verification
         Assertions.assertEquals(HttpStatus.ACCEPTED, updateResponseEntity.getStatusCode());
-        ResponseEntity<List<Post>> updatedResponseEntity = testRestTemplate.exchange("http://localhost:" + randomServerPort + "/api/post", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Post>>() {
+        ResponseEntity<List<PostDTO>> updatedResponseEntity = testRestTemplate.exchange("http://localhost:" + randomServerPort + "/api/post", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<PostDTO>>() {
         });
         // status code verification
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         // content verification
-        List<Post> updatedPostList = updatedResponseEntity.getBody();
+        List<PostDTO> updatedPostList = updatedResponseEntity.getBody();
         System.out.println(updatedPostList);
-        Post updatedPost = updatedPostList.get(0);
-        Assertions.assertEquals("Updated title", updatedPost.getTitle());
-        Assertions.assertEquals("Updated the body of content", updatedPost.getContent());
+        PostDTO updatedPost = updatedPostList.get(0);
+        Assertions.assertEquals("Updated title", updatedPost.getPostTitle());
+        Assertions.assertEquals("Updated the body of content", updatedPost.getContentBody());
 
     }
 

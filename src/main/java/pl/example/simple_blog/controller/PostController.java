@@ -1,10 +1,10 @@
 package pl.example.simple_blog.controller;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import pl.example.simple_blog.model.PostDTO;
 import pl.example.simple_blog.service.PostService;
 import pl.example.simple_blog.model.Post;
 
@@ -27,7 +27,7 @@ public class PostController {
     }
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Post> postList() {
+    public List<PostDTO> postList() {
         log.info("Listing all posts");
         return postService.listAllPosts();
     }

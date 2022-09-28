@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class Post {
 
     @Id
@@ -33,4 +32,12 @@ public class Post {
 
     private LocalDateTime updateDate;
 
+    public PostDTO mapToPostDTO() {
+        return new PostDTO(
+                id,
+                title,
+                content,
+                creationDate);
+
+    }
 }
